@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { Category } from '@/types';
 import { mockCategories } from '@/data/mockData';
 
@@ -8,8 +8,21 @@ interface CategoriesState {
   error: string | null;
 }
 
+const loadCategoriesFromStorage = (): Category[] => {
+  try {
+    const saved = localStorage.getItem('categories');
+    return saved ? JSON.parse(saved) : [];
+  } catch {
+    return [];
+  }
+};
+
+const saveCategoriesToStorage = (items: Category[]) => {
+  localStorage.setItem('categories', JSON.stringify(items));
+};
+
 const initialState: CategoriesState = {
-  items: [],
+  items: loadCategoriesFromStorage(),
   loading: false,
   error: null,
 };
@@ -17,8 +30,10 @@ const initialState: CategoriesState = {
 export const fetchCategories = createAsyncThunk(
   'categories/fetchCategories',
   async () => {
-    // Simulate API call - replace with actual Sanity fetch
     await new Promise((resolve) => setTimeout(resolve, 300));
+    const stored = loadCategoriesFromStorage();
+    if (stored.length > 0) return stored;
+    saveCategoriesToStorage(mockCategories);
     return mockCategories;
   }
 );
@@ -26,7 +41,23 @@ export const fetchCategories = createAsyncThunk(
 const categoriesSlice = createSlice({
   name: 'categories',
   initialState,
-  reducers: {},
+  reducers: {
+    addCategory: (state, action: PayloadAction<Category>) => {
+      state.items.push(action.payload);
+      saveCategoriesToStorage(state.items);
+    },
+    updateCategory: (state, action: PayloadAction<Category>) => {
+      const index = state.items.findIndex((c) => c._id === action.payload._id);
+      if (index !== -1) {
+        state.items[index] = action.payload;
+        saveCategoriesToStorage(state.items);
+      }
+    },
+    deleteCategory: (state, action: PayloadAction<string>) => {
+      state.items = state.items.filter((c) => c._id !== action.payload);
+      saveCategoriesToStorage(state.items);
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchCategories.pending, (state) => {
@@ -44,4 +75,5 @@ const categoriesSlice = createSlice({
   },
 });
 
+export const { addCategory, updateCategory, deleteCategory } = categoriesSlice.actions;
 export default categoriesSlice.reducer;

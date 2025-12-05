@@ -21,6 +21,7 @@ import Wishlist from '@/pages/Wishlist';
 import Checkout from '@/pages/Checkout';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
+import AdminLogin from '@/pages/AdminLogin';
 import Profile from '@/pages/Profile';
 import NotFound from '@/pages/NotFound';
 
@@ -56,6 +57,7 @@ const App = () => (
               {/* Auth Routes */}
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
 
               {/* Admin Routes */}
               <Route path="/admin" element={<AdminLayout />}>
