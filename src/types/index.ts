@@ -1,9 +1,11 @@
 export interface Product {
   _id: string;
   title: string;
-  slug: string;
+  slug: {
+    current: string;
+  };
   description: string;
-  images: string[];
+  image: string;
   price: number;
   oldPrice?: number;
   onSale: boolean;
@@ -15,8 +17,10 @@ export interface Product {
 
 export interface Category {
   _id: string;
-  name: string;
-  slug: string;
+  title: string;
+  slug: {
+    current: string;
+  };
   image: string;
   productCount?: number;
 }
@@ -47,7 +51,7 @@ export interface Order {
   userId: string;
   items: CartItem[];
   total: number;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered';
+  status: "pending" | "processing" | "shipped" | "delivered";
   shippingInfo: ShippingInfo;
   createdAt: string;
 }

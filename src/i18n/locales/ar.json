@@ -2,6 +2,7 @@
   "nav": {
     "home": "الرئيسية",
     "shop": "المتجر",
+    "shop_description": "اكتشف مجموعتنا المميزة من المنتجات المختارة خصيصاً لك",
     "categories": "الفئات",
     "cart": "السلة",
     "wishlist": "المفضلة",
@@ -14,15 +15,27 @@
   },
   "home": {
     "hero_title": "اكتشف أسلوبك",
+    "hero_rest_title": "من خلال مجموعتنا",
     "hero_subtitle": "مجموعات منتقاة لأسلوب الحياة العصري",
     "shop_now": "تسوق الآن",
     "explore": "استكشف",
     "featured_categories": "الفئات المميزة",
+    "featured_categories_discription": "استكشف مجموعتنا المختارة من الفئات المصممة خصيصًا لأسلوب حياتك",
     "trending_products": "المنتجات الرائجة",
+    "limited_time": "لفترة محدودة",
     "special_offers": "العروض الخاصة",
+    "offers_discription": "لا تفوتوا عروضنا الحصرية. وفروا حتى ٥٠٪ على منتجات مختارة!",
+    "end_in": "ينتهي خلال 3 أيام",
+    "shop_sale": "تخفيضات المتجر",
     "view_all": "عرض الكل",
+    "new_collection": "مجموعة جديدة",
     "new_arrivals": "وصل حديثاً",
-    "best_sellers": "الأكثر مبيعاً"
+    "best_sellers": "الأكثر مبيعاً",
+    "products": "منتج",
+    "customers": "عميل",
+    "brands": "علامة تجارية",
+    "on_orders": "على الطلبات بقيمة",
+    "summer_sale": "تخفيضات الصيف"
   },
   "product": {
     "add_to_cart": "أضف للسلة",
@@ -45,11 +58,13 @@
   "cart": {
     "title": "سلة التسوق",
     "empty": "سلتك فارغة",
+    "empty_description": "يبدو أنك لم تُضف أي شيء إلى سلة التسوق الخاصة بك حتى الآن.",
     "continue_shopping": "متابعة التسوق",
     "subtotal": "المجموع الفرعي",
     "shipping": "الشحن",
     "tax": "الضريبة",
     "total": "المجموع الكلي",
+    "for_free_shipping": "أضف منتجات بقيمة ${{remaining}} أو أكثر للحصول على شحن مجاني!",
     "checkout": "إتمام الشراء",
     "remove": "إزالة",
     "update": "تحديث",
@@ -58,21 +73,40 @@
   "wishlist": {
     "title": "قائمة المفضلة",
     "empty": "قائمة المفضلة فارغة",
-    "move_to_cart": "نقل إلى السلة"
+    "move_to_cart": "نقل إلى السلة",
+    "save_items": "احفظ المنتجات التي تعجبك بالنقر على أيقونة القلب الموجودة على أي منتج.",
+    "discover_your_favorites": "اكتشف منتجاتك المفضلة"
   },
   "auth": {
+    "invalid_credential": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
     "login": "تسجيل الدخول",
     "register": "إنشاء حساب",
     "email": "البريد الإلكتروني",
+    "email_in_use": "هذا البريد الإلكتروني مستخدم بالفعل",
     "password": "كلمة المرور",
     "confirm_password": "تأكيد كلمة المرور",
+    "description_login": "مرحباً بعودتك! يرجى تسجيل الدخول للمتابعة",
+    "description_register": "أنشئ حساباً للبدء",
     "name": "الاسم الكامل",
     "forgot_password": "نسيت كلمة المرور؟",
     "no_account": "ليس لديك حساب؟",
     "have_account": "لديك حساب بالفعل؟",
     "login_success": "مرحباً بعودتك!",
     "register_success": "تم إنشاء الحساب بنجاح!",
-    "logout_success": "نراك قريباً!"
+    "logout_success": "نراك قريباً!",
+    "auth_error": "فشل في المصادقة.",
+    "welcome": "مرحباً بك في LUXE، {{name}}!",
+    "welcome_back": "مرحباً بعودتك، {{name}}!"
+  },
+  "validation": {
+    "required": "هذا الحقل مطلوب",
+    "required_password": "كلمة المرور مطلوبة",
+    "required_email": "البريد الإلكتروني مطلوب",
+    "invalid_email": "عنوان البريد الإلكتروني غير صالح",
+    "password_mismatch": "كلمات المرور غير متطابقة",
+    "min_password": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل",
+    "min_length": "يجب أن يكون على الأقل {{min}} حرفًا",
+    "max_length": "يجب أن يكون على الأكثر {{max}} حرفًا"
   },
   "profile": {
     "title": "ملفي الشخصي",
@@ -92,11 +126,12 @@
     "city": "المدينة",
     "phone": "الهاتف",
     "success": "تم تأكيد الطلب بنجاح!",
-    "order_number": "رقم الطلب"
+    "order_number": "رقم الطلب",
+    "order_done": "شكراً لطلبك!"
   },
   "admin": {
     "dashboard": "لوحة التحكم",
-    "products": "المنتجات",
+    "products": "منتج",
     "categories": "الفئات",
     "orders": "الطلبات",
     "users": "المستخدمين",
@@ -110,11 +145,14 @@
     "recent_orders": "الطلبات الأخيرة"
   },
   "common": {
+    "all_categories": "كل الفئات",
+    "categories_discription": "استكشف فئاتنا المختارة بعناية لتجد ما تبحث عنه بالضبط.",
     "loading": "جاري التحميل...",
     "error": "حدث خطأ ما",
     "success": "تم بنجاح",
     "cancel": "إلغاء",
     "save": "حفظ",
+    "sale_only": "تخفيضات فقط",
     "delete": "حذف",
     "edit": "تعديل",
     "view": "عرض",
@@ -130,14 +168,31 @@
     "newest": "الأحدث",
     "popular": "الأكثر شعبية"
   },
+  "toast": {
+    "cart": {
+      "product_added": "{{product}} أضيف إلى السلة",
+      "product_removed": "{{product}} أزيل من السلة",
+      "moved_to_cart": "{{product}} تم نقله إلى السلة"
+    },
+    "wishlist": {
+      "product_added": "{{product}} أضيف إلى المفضلة",
+      "product_removed": "{{product}} أزيل من المفضلة"
+    },
+    "order_placed": "تم تأكيد الطلب {{orderId}}",
+    "profile_updated": "تم تحديث الملف الشخصي بنجاح",
+    "auth_error": "فشل في المصادقة."
+  },
   "footer": {
     "about": "من نحن",
     "contact": "اتصل بنا",
+    "curated_collections": "مجموعات مختارة بعناية تناسب نمط الحياة العصري. اكتشف منتجات فاخرة من جميع أنحاء العالم.",
     "privacy": "سياسة الخصوصية",
     "terms": "شروط الخدمة",
     "newsletter": "النشرة الإخبارية",
     "subscribe": "اشترك",
+    "subscribe_to": "اشترك للحصول على عروض خاصة، وهدايا مجانية، وصفقات حصرية.",
     "email_placeholder": "أدخل بريدك الإلكتروني",
-    "rights": "جميع الحقوق محفوظة"
+    "rights": "جميع الحقوق محفوظة",
+    "quick_links": "روابط سريعة"
   }
 }

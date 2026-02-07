@@ -1,8 +1,9 @@
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
-import { Category } from '@/types';
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
+import { Category } from "@/types";
+import { urlFor } from "@/lib/image";
 
 interface CategorySectionProps {
   categories: Category[];
@@ -21,10 +22,10 @@ const CategorySection = ({ categories }: CategorySectionProps) => {
           className="text-center mb-12"
         >
           <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">
-            {t('home.featured_categories')}
+            {t("home.featured_categories")}
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Explore our curated collection of categories designed for your lifestyle
+            {t("home.featured_categories_discription")}
           </p>
         </motion.div>
 
@@ -38,22 +39,30 @@ const CategorySection = ({ categories }: CategorySectionProps) => {
               transition={{ delay: index * 0.1 }}
             >
               <Link
-                to={`/category/${category.slug}`}
+                to={`/category/${category.slug.current}`}
                 className="group block"
               >
                 <div className="relative aspect-square overflow-hidden rounded-2xl bg-muted">
                   <img
-                    src={category.image}
-                    alt={category.name}
+                    src={
+                      category?.image
+                        ? urlFor(category.image)
+                            .width(208)
+                            .height(208)
+                            .quality(80)
+                            .url()
+                        : ""
+                    }
+                    alt={category?.title}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent" />
                   <div className="absolute bottom-4 left-4 right-4">
                     <h3 className="font-display text-lg font-semibold text-background mb-1">
-                      {category.name}
+                      {category?.title}
                     </h3>
                     <p className="text-sm text-background/80">
-                      {category.productCount} products
+                      {category.productCount} {t("admin.products")}
                     </p>
                   </div>
                 </div>
@@ -70,9 +79,9 @@ const CategorySection = ({ categories }: CategorySectionProps) => {
         >
           <Link
             to="/categories"
-            className="inline-flex items-center gap-2 text-primary font-medium hover:gap-3 transition-all"
+            className="inline-flex items-center gap-2 text-primary font-medium hover:gap-3 transition-all flex-row rtl:flex-row-reverse"
           >
-            {t('home.view_all')}
+            {t("home.view_all")}
             <ArrowRight className="h-4 w-4" />
           </Link>
         </motion.div>

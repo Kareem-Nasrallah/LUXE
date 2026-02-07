@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { User } from '@/types';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { User } from "@/types";
 
 interface AuthState {
   user: User | null;
@@ -9,7 +9,7 @@ interface AuthState {
 
 const loadUserFromStorage = (): User | null => {
   try {
-    const saved = localStorage.getItem('user');
+    const saved = localStorage.getItem("user");
     return saved ? JSON.parse(saved) : null;
   } catch {
     return null;
@@ -25,25 +25,27 @@ const initialState: AuthState = {
 };
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     login: (state, action: PayloadAction<User>) => {
       state.user = action.payload;
       state.isAuthenticated = true;
-      state.isAdmin = action.payload.isAdmin || false;
-      localStorage.setItem('user', JSON.stringify(action.payload));
+      state.isAdmin = !!action.payload.isAdmin;
+
+      localStorage.setItem("user", JSON.stringify(state.user));
     },
     logout: (state) => {
       state.user = null;
       state.isAuthenticated = false;
       state.isAdmin = false;
-      localStorage.removeItem('user');
+      console.log('first')
+      localStorage.removeItem("user");
     },
     updateUser: (state, action: PayloadAction<Partial<User>>) => {
       if (state.user) {
         state.user = { ...state.user, ...action.payload };
-        localStorage.setItem('user', JSON.stringify(state.user));
+        localStorage.setItem("user", JSON.stringify(state.user));
       }
     },
   },

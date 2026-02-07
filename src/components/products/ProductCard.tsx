@@ -1,15 +1,20 @@
-import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
-import { Heart, ShoppingCart, Star } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Product } from '@/types';
-import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
-import { addToCart } from '@/store/slices/cartSlice';
-import { addToWishlist, removeFromWishlist, selectIsInWishlist } from '@/store/slices/wishlistSlice';
-import { toast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
+import { Heart, ShoppingCart, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Product } from "@/types";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
+import { addToCart } from "@/store/slices/cartSlice";
+import {
+  addToWishlist,
+  removeFromWishlist,
+  selectIsInWishlist,
+} from "@/store/slices/wishlistSlice";
+import { toast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
+import { urlFor } from "@/lib/image";
 
 interface ProductCardProps {
   product: Product;
@@ -26,8 +31,9 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
     e.stopPropagation();
     dispatch(addToCart(product));
     toast({
-      title: t('common.success'),
-      description: `${product.title} added to cart`,
+      title: t("common.success"),
+      description: t("toast.cart.product_added", { product: product.title }),
+      variant: "success",
     });
   };
 
@@ -37,14 +43,20 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
     if (isInWishlist) {
       dispatch(removeFromWishlist(product._id));
       toast({
-        title: t('product.remove_from_wishlist'),
-        description: `${product.title} removed from wishlist`,
+        title: t("product.remove_from_wishlist"),
+        description: t("toast.wishlist.product_removed", {
+          product: product.title,
+        }),
+        variant: "warning",
       });
     } else {
       dispatch(addToWishlist(product));
       toast({
-        title: t('product.add_to_wishlist'),
-        description: `${product.title} added to wishlist`,
+        title: t("product.add_to_wishlist"),
+        description: t("toast.wishlist.product_added", {
+          product: product.title,
+        }),
+        variant: "success",
       });
     }
   };
@@ -59,26 +71,26 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.1 }}
     >
-      <Link to={`/product/${product.slug}`}>
+      <Link to={`/product/${product?.slug?.current}`}>
         <Card className="group overflow-hidden border-border/50 hover:border-primary/30 card-hover bg-card">
           <div className="relative aspect-square overflow-hidden bg-muted">
             <img
-              src={product.images[0]}
+              src={
+                product.image
+                  ? urlFor(product.image).width(440).height(330).url()
+                  : ""
+              }
               alt={product.title}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             />
-            
+
             {/* Badges */}
             <div className="absolute top-3 left-3 flex flex-col gap-2">
               {product.onSale && (
-                <span className="badge-sale">
-                  -{discountPercentage}%
-                </span>
+                <span className="badge-sale">-{discountPercentage}%</span>
               )}
               {product.isNew && (
-                <span className="badge-new">
-                  {t('product.new')}
-                </span>
+                <span className="badge-new">{t("product.new")}</span>
               )}
             </div>
 
@@ -88,12 +100,15 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
                 size="icon"
                 variant="secondary"
                 className={cn(
-                  'h-9 w-9 rounded-full shadow-lg',
-                  isInWishlist && 'bg-sale text-sale-foreground hover:bg-sale/90'
+                  "h-9 w-9 rounded-full shadow-lg",
+                  isInWishlist &&
+                    "bg-sale text-sale-foreground hover:bg-sale/90",
                 )}
                 onClick={handleToggleWishlist}
               >
-                <Heart className={cn('h-4 w-4', isInWishlist && 'fill-current')} />
+                <Heart
+                  className={cn("h-4 w-4", isInWishlist && "fill-current")}
+                />
               </Button>
             </div>
 
@@ -105,7 +120,9 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
                 disabled={product.stock === 0}
               >
                 <ShoppingCart className="h-4 w-4 mr-2" />
-                {product.stock === 0 ? t('product.out_of_stock') : t('product.add_to_cart')}
+                {product.stock === 0
+                  ? t("product.out_of_stock")
+                  : t("product.add_to_cart")}
               </Button>
             </div>
           </div>
@@ -113,7 +130,7 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
           <CardContent className="p-4">
             <div className="space-y-2">
               <p className="text-xs text-muted-foreground uppercase tracking-wider">
-                {product.category.name}
+                {product.category.title}
               </p>
               <h3 className="font-medium text-foreground line-clamp-1 group-hover:text-primary transition-colors">
                 {product.title}

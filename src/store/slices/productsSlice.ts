@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Product } from '@/types';
-import { mockProducts } from '@/data/mockData';
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { Product } from "@/types";
+import { client } from "../../../client";
 
 interface ProductsState {
   items: Product[];
@@ -12,7 +12,7 @@ interface ProductsState {
     category: string | null;
     priceRange: [number, number];
     onSale: boolean;
-    sortBy: 'newest' | 'price-low' | 'price-high' | 'popular';
+    sortBy: "newest" | "price-low" | "price-high" | "popular";
   };
 }
 
@@ -26,27 +26,34 @@ const initialState: ProductsState = {
     category: null,
     priceRange: [0, 10000],
     onSale: false,
-    sortBy: 'newest',
+    sortBy: "newest",
   },
 };
 
 export const fetchProducts = createAsyncThunk(
-  'products/fetchProducts',
+  "products/fetchProducts",
   async () => {
-    // Simulate API call - replace with actual Sanity fetch
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    return mockProducts;
-  }
+    const data = await client.fetch(`*[_type == "product"]{
+    ...,
+    category->{
+      _id,
+      title,
+      slug
+    }}`);
+    return data;
+  },
 );
 
 export const fetchProductBySlug = createAsyncThunk(
-  'products/fetchProductBySlug',
+  "products/fetchProductBySlug",
   async (slug: string) => {
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    const product = mockProducts.find((p) => p.slug === slug);
-    if (!product) throw new Error('Product not found');
+    const product = await client.fetch(
+      `*[_type == "product" && slug.current == $slug][0]`,
+      { slug },
+    );
+    if (!product) throw new Error("Product not found");
     return product;
-  }
+  },
 );
 
 const applyFilters = (state: ProductsState) => {
@@ -54,7 +61,7 @@ const applyFilters = (state: ProductsState) => {
 
   if (state.filters.category) {
     filtered = filtered.filter(
-      (p) => p.category.slug === state.filters.category
+      (p) => p.category.slug.current === state.filters.category,
     );
   }
 
@@ -65,17 +72,17 @@ const applyFilters = (state: ProductsState) => {
   filtered = filtered.filter(
     (p) =>
       p.price >= state.filters.priceRange[0] &&
-      p.price <= state.filters.priceRange[1]
+      p.price <= state.filters.priceRange[1],
   );
 
   switch (state.filters.sortBy) {
-    case 'price-low':
+    case "price-low":
       filtered.sort((a, b) => a.price - b.price);
       break;
-    case 'price-high':
+    case "price-high":
       filtered.sort((a, b) => b.price - a.price);
       break;
-    case 'popular':
+    case "popular":
       filtered.sort((a, b) => b.rating - a.rating);
       break;
     default:
@@ -86,7 +93,7 @@ const applyFilters = (state: ProductsState) => {
 };
 
 const productsSlice = createSlice({
-  name: 'products',
+  name: "products",
   initialState,
   reducers: {
     setCategory: (state, action: PayloadAction<string | null>) => {
@@ -103,7 +110,7 @@ const productsSlice = createSlice({
     },
     setSortBy: (
       state,
-      action: PayloadAction<'newest' | 'price-low' | 'price-high' | 'popular'>
+      action: PayloadAction<"newest" | "price-low" | "price-high" | "popular">,
     ) => {
       state.filters.sortBy = action.payload;
       applyFilters(state);
@@ -141,7 +148,7 @@ const productsSlice = createSlice({
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Failed to fetch products';
+        state.error = action.error.message || "Failed to fetch products";
       })
       .addCase(fetchProductBySlug.pending, (state) => {
         state.loading = true;
@@ -153,7 +160,7 @@ const productsSlice = createSlice({
       })
       .addCase(fetchProductBySlug.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Product not found';
+        state.error = action.error.message || "Product not found";
       });
   },
 });

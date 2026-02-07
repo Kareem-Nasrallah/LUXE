@@ -1,16 +1,19 @@
-import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
-import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
-import { fetchCategories } from '@/store/slices/categoriesSlice';
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
+import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
+import { fetchCategories } from "@/store/slices/categoriesSlice";
+import { urlFor } from "@/lib/image";
 
 const Categories = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { items: categories, loading } = useAppSelector((state) => state.categories);
+  const { items: categories, loading } = useAppSelector(
+    (state) => state.categories,
+  );
 
   useEffect(() => {
     dispatch(fetchCategories());
@@ -19,8 +22,11 @@ const Categories = () => {
   return (
     <>
       <Helmet>
-        <title>{t('nav.categories')} - LUXE</title>
-        <meta name="description" content="Browse all product categories at LUXE. Find electronics, fashion, home goods, and more." />
+        <title>{t("nav.categories")} - LUXE</title>
+        <meta
+          name="description"
+          content="Browse all product categories at LUXE. Find electronics, fashion, home goods, and more."
+        />
       </Helmet>
 
       <div className="min-h-screen bg-background">
@@ -33,10 +39,10 @@ const Categories = () => {
               className="text-center"
             >
               <h1 className="font-display text-4xl md:text-5xl font-bold mb-4">
-                {t('nav.categories')}
+                {t("nav.categories")}
               </h1>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Explore our curated categories to find exactly what you're looking for
+                {t("common.categories_discription")}
               </p>
             </motion.div>
           </div>
@@ -61,18 +67,22 @@ const Categories = () => {
                   transition={{ delay: index * 0.1 }}
                 >
                   <Link
-                    to={`/category/${category.slug}`}
+                    to={`/category/${category.slug.current}`}
                     className="group block relative aspect-[4/3] overflow-hidden rounded-2xl"
                   >
                     <img
-                      src={category.image}
-                      alt={category.name}
+                      src={
+                        category.image
+                          ? urlFor(category.image).width(440).height(330).url()
+                          : ""
+                      }
+                      alt={category.title}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/40 to-transparent" />
                     <div className="absolute inset-0 flex flex-col justify-end p-6">
                       <h2 className="font-display text-2xl md:text-3xl font-bold text-background mb-2">
-                        {category.name}
+                        {category.title}
                       </h2>
                       <div className="flex items-center justify-between">
                         <p className="text-background/80">

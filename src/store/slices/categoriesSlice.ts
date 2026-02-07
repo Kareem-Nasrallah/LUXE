@@ -1,6 +1,7 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Category } from '@/types';
-import { mockCategories } from '@/data/mockData';
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { Category } from "@/types";
+import { mockCategories } from "@/data/mockData";
+import { client } from "../../../client";
 
 interface CategoriesState {
   items: Category[];
@@ -8,54 +9,45 @@ interface CategoriesState {
   error: string | null;
 }
 
-const loadCategoriesFromStorage = (): Category[] => {
-  try {
-    const saved = localStorage.getItem('categories');
-    return saved ? JSON.parse(saved) : [];
-  } catch {
-    return [];
-  }
-};
-
-const saveCategoriesToStorage = (items: Category[]) => {
-  localStorage.setItem('categories', JSON.stringify(items));
-};
-
 const initialState: CategoriesState = {
-  items: loadCategoriesFromStorage(),
+  items: [],
   loading: false,
   error: null,
 };
 
 export const fetchCategories = createAsyncThunk(
-  'categories/fetchCategories',
+  "categories/fetchCategories",
   async () => {
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    const stored = loadCategoriesFromStorage();
-    if (stored.length > 0) return stored;
-    saveCategoriesToStorage(mockCategories);
-    return mockCategories;
-  }
+    const categories = await client.fetch(`
+      *[_type == "category"]{
+        _id,
+        title,
+        slug,
+        image,
+        "productCount": count(
+          *[_type == "product" && category._ref == ^._id]
+        )
+      }
+    `);
+    return categories;
+  },
 );
 
 const categoriesSlice = createSlice({
-  name: 'categories',
+  name: "categories",
   initialState,
   reducers: {
     addCategory: (state, action: PayloadAction<Category>) => {
       state.items.push(action.payload);
-      saveCategoriesToStorage(state.items);
     },
     updateCategory: (state, action: PayloadAction<Category>) => {
       const index = state.items.findIndex((c) => c._id === action.payload._id);
       if (index !== -1) {
         state.items[index] = action.payload;
-        saveCategoriesToStorage(state.items);
       }
     },
     deleteCategory: (state, action: PayloadAction<string>) => {
       state.items = state.items.filter((c) => c._id !== action.payload);
-      saveCategoriesToStorage(state.items);
     },
   },
   extraReducers: (builder) => {
@@ -70,10 +62,11 @@ const categoriesSlice = createSlice({
       })
       .addCase(fetchCategories.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Failed to fetch categories';
+        state.error = action.error.message || "Failed to fetch categories";
       });
   },
 });
 
-export const { addCategory, updateCategory, deleteCategory } = categoriesSlice.actions;
+export const { addCategory, updateCategory, deleteCategory } =
+  categoriesSlice.actions;
 export default categoriesSlice.reducer;

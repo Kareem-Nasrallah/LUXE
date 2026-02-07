@@ -1,13 +1,17 @@
-import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
-import { Heart, ShoppingCart, Trash2, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
-import { selectWishlistItems, removeFromWishlist } from '@/store/slices/wishlistSlice';
-import { addToCart } from '@/store/slices/cartSlice';
-import { toast } from '@/hooks/use-toast';
+import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
+import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
+import { Heart, ShoppingCart, Trash2, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
+import {
+  selectWishlistItems,
+  removeFromWishlist,
+} from "@/store/slices/wishlistSlice";
+import { addToCart } from "@/store/slices/cartSlice";
+import { toast } from "@/hooks/use-toast";
+import { urlFor } from "@/lib/image";
 
 const Wishlist = () => {
   const { t } = useTranslation();
@@ -17,8 +21,11 @@ const Wishlist = () => {
   const handleRemove = (productId: string, productName: string) => {
     dispatch(removeFromWishlist(productId));
     toast({
-      title: t('product.remove_from_wishlist'),
-      description: `${productName} removed from wishlist`,
+      title: t("product.remove_from_wishlist"),
+      description: t("toast.wishlist.product_removed", {
+        product: productName,
+      }),
+      variant: "warning",
     });
   };
 
@@ -26,8 +33,9 @@ const Wishlist = () => {
     dispatch(addToCart(product));
     dispatch(removeFromWishlist(product._id));
     toast({
-      title: t('common.success'),
-      description: `${product.title} moved to cart`,
+      title: t("common.success"),
+      description: t("toast.cart.product_added", { product: product.title }),
+      variant: "success",
     });
   };
 
@@ -35,7 +43,7 @@ const Wishlist = () => {
     return (
       <>
         <Helmet>
-          <title>{t('wishlist.title')} - LUXE</title>
+          <title>{t("wishlist.title")} - LUXE</title>
         </Helmet>
         <div className="min-h-[60vh] flex flex-col items-center justify-center px-4">
           <motion.div
@@ -44,14 +52,16 @@ const Wishlist = () => {
             className="text-center"
           >
             <Heart className="h-24 w-24 text-muted-foreground/30 mx-auto mb-6" />
-            <h1 className="font-display text-3xl font-bold mb-4">{t('wishlist.empty')}</h1>
+            <h1 className="font-display text-3xl font-bold mb-4">
+              {t("wishlist.empty")}
+            </h1>
             <p className="text-muted-foreground mb-8">
-              Save items you love by clicking the heart icon on any product.
+              {t("wishlist.save_items")}
             </p>
             <Button asChild size="lg">
               <Link to="/shop">
-                Start Shopping
-                <ArrowRight className="ml-2 h-4 w-4" />
+                {t("wishlist.discover_your_favorites")}
+                <ArrowRight className="ms-2 h-4 w-4" />
               </Link>
             </Button>
           </motion.div>
@@ -63,7 +73,7 @@ const Wishlist = () => {
   return (
     <>
       <Helmet>
-        <title>{t('wishlist.title')} - LUXE</title>
+        <title>{t("wishlist.title")} - LUXE</title>
       </Helmet>
 
       <div className="min-h-screen bg-background">
@@ -73,7 +83,7 @@ const Wishlist = () => {
             animate={{ opacity: 1, y: 0 }}
             className="font-display text-3xl md:text-4xl font-bold mb-8"
           >
-            {t('wishlist.title')} ({wishlistItems.length})
+            {t("wishlist.title")} ({wishlistItems.length})
           </motion.h1>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -85,10 +95,14 @@ const Wishlist = () => {
                 transition={{ delay: index * 0.1 }}
                 className="bg-card rounded-xl border border-border overflow-hidden group"
               >
-                <Link to={`/product/${product.slug}`}>
+                <Link to={`/product/${product.slug.current}`}>
                   <div className="aspect-square overflow-hidden bg-muted">
                     <img
-                      src={product.images[0]}
+                      src={
+                        product?.image
+                          ? urlFor(product.image).width(440).height(330).url()
+                          : ""
+                      }
                       alt={product.title}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />
@@ -96,9 +110,9 @@ const Wishlist = () => {
                 </Link>
                 <div className="p-4">
                   <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
-                    {product.category.name}
+                    {product.category?.title}
                   </p>
-                  <Link to={`/product/${product.slug}`}>
+                  <Link to={`/product/${product.slug.current}`}>
                     <h3 className="font-medium line-clamp-1 hover:text-primary transition-colors">
                       {product.title}
                     </h3>
@@ -118,7 +132,7 @@ const Wishlist = () => {
                       onClick={() => handleMoveToCart(product)}
                     >
                       <ShoppingCart className="h-4 w-4 mr-2" />
-                      {t('wishlist.move_to_cart')}
+                      {t("wishlist.move_to_cart")}
                     </Button>
                     <Button
                       variant="outline"

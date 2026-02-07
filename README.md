@@ -1,73 +1,160 @@
-# Welcome to your Lovable project
+# 🛒 E-Commerce Website
 
-## Project info
+A modern e-commerce web application built with **React** and **TypeScript**, focusing on performance, clean UI, and real-world shopping experience. The project is fully functional for end users and designed to be scalable for future admin and analytics features.
 
-**URL**: https://lovable.dev/projects/a776af95-0834-4ac1-b9e9-e7d375e0fb3c
+---
 
-## How can I edit this code?
+## 🚀 Live Features (Implemented)
 
-There are several ways of editing your application.
+### 🏠 Home Page
 
-**Use Lovable**
+- Featured products
+- Highlighted categories
+- Active offers
+- Add products to **Cart** or **Wishlist** directly
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/a776af95-0834-4ac1-b9e9-e7d375e0fb3c) and start prompting.
+### 🛍️ Shop Page
 
-Changes made via Lovable will be committed automatically to this repo.
+- Full product listing
+- Advanced filtering:
+  - By category
+  - By price range
+  - Products with offers
+  - Combine or reset filters
 
-**Use your preferred IDE**
+- Sorting options:
+  - Price (low → high / high → low)
+  - Newest products
+  - Most popular
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### 📦 Product Details Page
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- Detailed product information
+- Add any quantity to the cart
+- Cart access available anywhere products appear
 
-Follow these steps:
+### 🗂️ Categories
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+- Categories overview page:
+  - Category image
+  - Name
+  - Product count per category
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+- Individual category pages with all related products
 
-# Step 3: Install the necessary dependencies.
-npm i
+### 🛒 Cart
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+- Cart items management
+- Quantity updates
+- Order summary
 
-**Edit a file directly in GitHub**
+### 💳 Checkout
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- Checkout flow with order summary
 
-**Use GitHub Codespaces**
+### 👤 User Profile
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- Personal information
+- Orders tracking
+- Wishlist management
 
-## What technologies are used for this project?
+### ❤️ Wishlist
 
-This project is built with:
+- Add / remove products
+- Persistent across sessions
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### 🔐 Authentication
 
-## How can I deploy this project?
+- Login page
+- Register page
+- Firebase authentication (Email/Password)
 
-Simply open [Lovable](https://lovable.dev/projects/a776af95-0834-4ac1-b9e9-e7d375e0fb3c) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
+## ✨ Extra Features
 
-Yes, you can!
+- 🌙 Dark / Light Mode
+- 🌍 Multi-language support (Arabic / English)
+- 💾 Persistent cart per user
+- 🔔 Toast notifications
+- 📱 Responsive design
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+---
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## 🧩 Planned Features (Upcoming)
+
+These features are intentionally planned for future development:
+
+### 🛠️ Admin Panel
+
+- Admin authentication & roles
+- Create / edit / delete:
+  - Categories
+  - Products
+  - Offers
+
+### 📊 Dashboard & Analytics
+
+- Sales analysis
+- Orders overview
+- Revenue statistics
+
+### ⭐ Product Reviews
+
+- User ratings
+- Product comments
+
+---
+
+## 🗄️ Backend & Services
+
+- **Sanity CMS** → Products, categories, offers data
+- **Firebase Authentication** → User login & registration
+
+---
+
+## 🧪 Tech Stack
+
+- **React**
+- **TypeScript**
+- **Vite**
+- **React Router DOM**
+- **Redux Toolkit**
+- **Tailwind CSS**
+- **shadcn/ui**
+- **next-themes**
+- **Formik**
+- **Yup**
+- **i18next**
+- **Lucide React**
+
+---
+
+## 📁 Project Status
+
+- ✅ Core e-commerce features completed
+- 🚧 Admin & analytics features planned
+- 🔄 Continuous improvements & refactoring
+
+---
+
+## 📝 Notes
+
+This project was developed with a strong focus on:
+
+- Clean architecture
+- Reusable components
+- Real-world e-commerce logic
+- Scalability for future features
+
+---
+
+## 👨‍💻 Author
+
+**Kareem Nasrallah**
+
+Frontend Developer
+
+---
+
+⭐ If you like the project, feel free to give it a star!

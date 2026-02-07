@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ShoppingCart,
   Heart,
@@ -14,30 +14,41 @@ import {
   Globe,
   LogOut,
   Settings,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Badge } from '@/components/ui/badge';
-import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
-import { selectCartCount } from '@/store/slices/cartSlice';
-import { selectWishlistItems } from '@/store/slices/wishlistSlice';
-import { selectIsAuthenticated, selectUser, selectIsAdmin, logout } from '@/store/slices/authSlice';
-import { toggleDarkMode, setLanguage, selectDarkMode, selectLanguage } from '@/store/slices/uiSlice';
-import i18n from '@/i18n';
+} from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
+import { loadCart, selectCartCount } from "@/store/slices/cartSlice";
+import { selectWishlistItems } from "@/store/slices/wishlistSlice";
+import {
+  selectIsAuthenticated,
+  selectUser,
+  selectIsAdmin,
+  logout,
+} from "@/store/slices/authSlice";
+import {
+  toggleDarkMode,
+  setLanguage,
+  selectDarkMode,
+  selectLanguage,
+} from "@/store/slices/uiSlice";
+import i18n from "@/i18n";
+import { logoutUser } from "@/services/authService";
 
 const Header = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
+  // const [searchOpen, setSearchOpen] = useState(false);
 
   const cartCount = useAppSelector(selectCartCount);
   const wishlistItems = useAppSelector(selectWishlistItems);
@@ -47,20 +58,27 @@ const Header = () => {
   const darkMode = useAppSelector(selectDarkMode);
   const language = useAppSelector(selectLanguage);
 
-  const handleLanguageChange = (lang: 'en' | 'ar') => {
+  const handleLanguageChange = (lang: "en" | "ar") => {
     dispatch(setLanguage(lang));
     i18n.changeLanguage(lang);
   };
 
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate('/');
+  const handleLogout = async () => {
+    try {
+      const resp = await logoutUser();
+      console.log(resp);
+      dispatch(logout());
+      navigate("/login");
+      dispatch(loadCart());
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const navLinks = [
-    { href: '/', label: t('nav.home') },
-    { href: '/shop', label: t('nav.shop') },
-    { href: '/categories', label: t('nav.categories') },
+    { href: "/", label: t("nav.home") },
+    { href: "/shop", label: t("nav.shop") },
+    { href: "/categories", label: t("nav.categories") },
   ];
 
   return (
@@ -90,14 +108,14 @@ const Header = () => {
           {/* Actions */}
           <div className="flex items-center gap-2 md:gap-4">
             {/* Search */}
-            <Button
+            {/* <Button
               variant="ghost"
               size="icon"
               className="hidden md:flex"
               onClick={() => setSearchOpen(!searchOpen)}
             >
               <Search className="h-5 w-5" />
-            </Button>
+            </Button> */}
 
             {/* Language */}
             <DropdownMenu>
@@ -107,11 +125,11 @@ const Header = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => handleLanguageChange('en')}>
-                  English {language === 'en' && '✓'}
+                <DropdownMenuItem onClick={() => handleLanguageChange("en")}>
+                  English {language === "en" && "✓"}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleLanguageChange('ar')}>
-                  العربية {language === 'ar' && '✓'}
+                <DropdownMenuItem onClick={() => handleLanguageChange("ar")}>
+                  العربية {language === "ar" && "✓"}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -164,23 +182,25 @@ const Header = () => {
                 <DropdownMenuContent align="end" className="w-48">
                   <div className="px-3 py-2">
                     <p className="font-medium">{user?.name}</p>
-                    <p className="text-sm text-muted-foreground">{user?.email}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {user?.email}
+                    </p>
                   </div>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate('/profile')}>
+                  <DropdownMenuItem onClick={() => navigate("/profile")}>
                     <User className="h-4 w-4 mr-2" />
-                    {t('nav.profile')}
+                    {t("nav.profile")}
                   </DropdownMenuItem>
                   {isAdmin && (
-                    <DropdownMenuItem onClick={() => navigate('/admin')}>
+                    <DropdownMenuItem onClick={() => navigate("/admin")}>
                       <Settings className="h-4 w-4 mr-2" />
-                      {t('nav.admin')}
+                      {t("nav.admin")}
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="h-4 w-4 mr-2" />
-                    {t('nav.logout')}
+                    {t("nav.logout")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -188,10 +208,10 @@ const Header = () => {
               <Button
                 variant="default"
                 size="sm"
-                onClick={() => navigate('/login')}
+                onClick={() => navigate("/login")}
                 className="hidden md:flex"
               >
-                {t('nav.login')}
+                {t("nav.login")}
               </Button>
             )}
 
@@ -212,7 +232,7 @@ const Header = () => {
         </div>
 
         {/* Search Bar */}
-        <AnimatePresence>
+        {/* <AnimatePresence>
           {searchOpen && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
@@ -230,7 +250,7 @@ const Header = () => {
               </div>
             </motion.div>
           )}
-        </AnimatePresence>
+        </AnimatePresence> */}
       </div>
 
       {/* Mobile Menu */}
@@ -259,21 +279,21 @@ const Header = () => {
                     variant="default"
                     className="w-full"
                     onClick={() => {
-                      navigate('/login');
+                      navigate("/login");
                       setMobileMenuOpen(false);
                     }}
                   >
-                    {t('nav.login')}
+                    {t("nav.login")}
                   </Button>
                   <Button
                     variant="outline"
                     className="w-full"
                     onClick={() => {
-                      navigate('/register');
+                      navigate("/register");
                       setMobileMenuOpen(false);
                     }}
                   >
-                    {t('nav.register')}
+                    {t("nav.register")}
                   </Button>
                 </div>
               )}

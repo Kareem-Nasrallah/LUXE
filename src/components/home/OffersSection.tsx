@@ -1,10 +1,10 @@
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ArrowRight, Clock, Percent } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Product } from '@/types';
-import ProductCard from '@/components/products/ProductCard';
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { ArrowRight, Clock, Percent } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Product } from "@/types";
+import ProductCard from "@/components/products/ProductCard";
 
 interface OffersSectionProps {
   products: Product[];
@@ -30,24 +30,29 @@ const OffersSection = ({ products }: OffersSectionProps) => {
             <div className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground rounded-3xl p-8 md:p-10">
               <div className="inline-flex items-center gap-2 bg-primary-foreground/20 px-4 py-2 rounded-full text-sm font-medium mb-6">
                 <Percent className="h-4 w-4" />
-                <span>Limited Time</span>
+                <span>{t("home.limited_time")}</span>
               </div>
               <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">
-                {t('home.special_offers')}
+                {t("home.special_offers")}
               </h2>
               <p className="text-primary-foreground/80 mb-6">
-                Don't miss out on our exclusive deals. Save up to 50% on selected items!
+                {t("home.offers_discription")}
               </p>
               <div className="flex items-center gap-4 mb-8">
                 <div className="flex items-center gap-2 text-sm">
                   <Clock className="h-4 w-4" />
-                  <span>Ends in 3 days</span>
+                  <span>{t("home.end_in")}</span>
                 </div>
               </div>
-              <Button asChild variant="secondary" size="lg" className="w-full sm:w-auto">
+              <Button
+                asChild
+                variant="secondary"
+                size="lg"
+                className="w-full inline-flex flex-row rtl:flex-row-reverse sm:w-auto"
+              >
                 <Link to="/shop?sale=true">
-                  Shop Sale
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  {t("home.shop_sale")}
+                  <ArrowRight className="ms-2 h-4 w-4" />
                 </Link>
               </Button>
             </div>

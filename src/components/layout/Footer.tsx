@@ -1,8 +1,15 @@
-import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { Facebook, Instagram, Twitter, Mail, MapPin, Phone } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import {
+  Facebook,
+  Instagram,
+  Twitter,
+  Mail,
+  MapPin,
+  Phone,
+} from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const Footer = () => {
   const { t } = useTranslation();
@@ -15,10 +22,12 @@ const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <Link to="/" className="inline-block">
-              <span className="font-display text-3xl font-bold text-gradient">LUXE</span>
+              <span className="font-display text-3xl font-bold text-gradient">
+                LUXE
+              </span>
             </Link>
             <p className="text-muted-foreground leading-relaxed">
-              Curated collections for the modern lifestyle. Discover premium products from around the world.
+              {t("footer.curated_collections")}
             </p>
             <div className="flex gap-4">
               <a
@@ -47,26 +56,40 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-display text-lg font-semibold mb-4">Quick Links</h3>
+            <h3 className="font-display text-lg font-semibold mb-4">
+              {t("footer.quick_links")}
+            </h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/shop" className="text-muted-foreground hover:text-primary transition-colors">
-                  {t('nav.shop')}
+                <Link
+                  to="/shop"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
+                  {t("nav.shop")}
                 </Link>
               </li>
               <li>
-                <Link to="/categories" className="text-muted-foreground hover:text-primary transition-colors">
-                  {t('nav.categories')}
+                <Link
+                  to="/categories"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
+                  {t("nav.categories")}
                 </Link>
               </li>
               <li>
-                <Link to="/wishlist" className="text-muted-foreground hover:text-primary transition-colors">
-                  {t('nav.wishlist')}
+                <Link
+                  to="/wishlist"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
+                  {t("nav.wishlist")}
                 </Link>
               </li>
               <li>
-                <Link to="/cart" className="text-muted-foreground hover:text-primary transition-colors">
-                  {t('nav.cart')}
+                <Link
+                  to="/cart"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
+                  {t("nav.cart")}
                 </Link>
               </li>
             </ul>
@@ -74,7 +97,9 @@ const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h3 className="font-display text-lg font-semibold mb-4">{t('footer.contact')}</h3>
+            <h3 className="font-display text-lg font-semibold mb-4">
+              {t("footer.contact")}
+            </h3>
             <ul className="space-y-3">
               <li className="flex items-start gap-3 text-muted-foreground">
                 <MapPin className="h-5 w-5 shrink-0 mt-0.5" />
@@ -93,17 +118,19 @@ const Footer = () => {
 
           {/* Newsletter */}
           <div>
-            <h3 className="font-display text-lg font-semibold mb-4">{t('footer.newsletter')}</h3>
+            <h3 className="font-display text-lg font-semibold mb-4">
+              {t("footer.newsletter")}
+            </h3>
             <p className="text-muted-foreground mb-4">
-              Subscribe to get special offers, free giveaways, and exclusive deals.
+              {t("footer.subscribe_to")}
             </p>
             <div className="flex gap-2">
               <Input
                 type="email"
-                placeholder={t('footer.email_placeholder')}
+                placeholder={t("footer.email_placeholder")}
                 className="flex-1"
               />
-              <Button>{t('footer.subscribe')}</Button>
+              <Button>{t("footer.subscribe")}</Button>
             </div>
           </div>
         </div>
@@ -111,14 +138,20 @@ const Footer = () => {
         {/* Bottom */}
         <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-muted-foreground text-sm">
-            © {currentYear} LUXE. {t('footer.rights')}.
+            © {currentYear} LUXE. {t("footer.rights")}.
           </p>
           <div className="flex gap-6 text-sm">
-            <Link to="/privacy" className="text-muted-foreground hover:text-primary transition-colors">
-              {t('footer.privacy')}
+            <Link
+              to="/privacy"
+              className="text-muted-foreground hover:text-primary transition-colors"
+            >
+              {t("footer.privacy")}
             </Link>
-            <Link to="/terms" className="text-muted-foreground hover:text-primary transition-colors">
-              {t('footer.terms')}
+            <Link
+              to="/terms"
+              className="text-muted-foreground hover:text-primary transition-colors"
+            >
+              {t("footer.terms")}
             </Link>
           </div>
         </div>

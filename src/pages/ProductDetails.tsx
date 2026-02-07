@@ -1,29 +1,49 @@
-import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
-import { Heart, Minus, Plus, ShoppingCart, Star, ChevronLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
-import { fetchProductBySlug, fetchProducts } from '@/store/slices/productsSlice';
-import { addToCart } from '@/store/slices/cartSlice';
-import { addToWishlist, removeFromWishlist, selectIsInWishlist } from '@/store/slices/wishlistSlice';
-import { toast } from '@/hooks/use-toast';
-import ProductCard from '@/components/products/ProductCard';
-import { mockReviews } from '@/data/mockData';
-import { cn } from '@/lib/utils';
+import { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
+import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
+import {
+  Heart,
+  Minus,
+  Plus,
+  ShoppingCart,
+  Star,
+  ChevronLeft,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
+import {
+  fetchProductBySlug,
+  fetchProducts,
+} from "@/store/slices/productsSlice";
+import { addToCart } from "@/store/slices/cartSlice";
+import {
+  addToWishlist,
+  removeFromWishlist,
+  selectIsInWishlist,
+} from "@/store/slices/wishlistSlice";
+import { toast } from "@/hooks/use-toast";
+import ProductCard from "@/components/products/ProductCard";
+import { mockReviews } from "@/data/mockData";
+import { cn } from "@/lib/utils";
+import { urlFor } from "@/lib/image";
 
 const ProductDetails = () => {
   const { slug } = useParams<{ slug: string }>();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [quantity, setQuantity] = useState(1);
-  const [selectedImage, setSelectedImage] = useState(0);
+  // const [selectedImage, setSelectedImage] = useState(0);
 
-  const { currentProduct: product, items: allProducts, loading, error } = useAppSelector((state) => state.products);
-  const isInWishlist = useAppSelector(selectIsInWishlist(product?._id || ''));
+  const {
+    currentProduct: product,
+    items: allProducts,
+    loading,
+    error,
+  } = useAppSelector((state) => state.products);
+  const isInWishlist = useAppSelector(selectIsInWishlist(product?._id || ""));
 
   useEffect(() => {
     if (slug) {
@@ -38,8 +58,9 @@ const ProductDetails = () => {
         dispatch(addToCart(product));
       }
       toast({
-        title: t('common.success'),
-        description: `${product.title} added to cart`,
+        title: t("common.success"),
+        description: t("toast.cart.product_added", { product: product.title }),
+        variant: "success",
       });
     }
   };
@@ -49,29 +70,41 @@ const ProductDetails = () => {
       if (isInWishlist) {
         dispatch(removeFromWishlist(product._id));
         toast({
-          title: t('product.remove_from_wishlist'),
-          description: `${product.title} removed from wishlist`,
+          title: t("product.remove_from_wishlist"),
+          description: t("toast.wishlist.product_removed", {
+            product: product.title,
+          }),
+          variant: "warning",
         });
       } else {
         dispatch(addToWishlist(product));
         toast({
-          title: t('product.add_to_wishlist'),
-          description: `${product.title} added to wishlist`,
+          title: t("product.add_to_wishlist"),
+          description: t("toast.wishlist.product_added", {
+            product: product.title,
+          }),
+          variant: "success",
         });
       }
     }
   };
 
   const relatedProducts = allProducts
-    .filter((p) => p.category._id === product?.category._id && p._id !== product?._id)
+    .filter(
+      (p) => p.category._id === product?.category._id && p._id !== product?._id,
+    )
     .slice(0, 4);
 
-  const productReviews = mockReviews.filter((r) => r.productId === product?._id);
+  const productReviews = mockReviews.filter(
+    (r) => r.productId === product?._id,
+  );
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse text-muted-foreground">{t('common.loading')}</div>
+        <div className="animate-pulse text-muted-foreground">
+          {t("common.loading")}
+        </div>
       </div>
     );
   }
@@ -80,9 +113,11 @@ const ProductDetails = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-destructive mb-4">{error || 'Product not found'}</p>
+          <p className="text-destructive mb-4">
+            {error || "Product not found"}
+          </p>
           <Button asChild>
-            <Link to="/shop">{t('common.back')}</Link>
+            <Link to="/shop">{t("common.back")}</Link>
           </Button>
         </div>
       </div>
@@ -108,7 +143,7 @@ const ProductDetails = () => {
             className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-8"
           >
             <ChevronLeft className="h-4 w-4" />
-            {t('common.back')} to Shop
+            {t("common.back")} to Shop
           </Link>
 
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
@@ -120,27 +155,37 @@ const ProductDetails = () => {
             >
               <div className="aspect-square overflow-hidden rounded-2xl bg-muted">
                 <img
-                  src={product.images[selectedImage]}
+                  src={
+                    product.image
+                      ? urlFor(product.image).width(660).height(660).url()
+                      : ""
+                  }
                   alt={product.title}
                   className="w-full h-full object-cover"
                 />
               </div>
-              {product.images.length > 1 && (
+              {/* {product.images.length > 1 && (
                 <div className="flex gap-4">
                   {product.images.map((img, idx) => (
                     <button
                       key={idx}
                       onClick={() => setSelectedImage(idx)}
                       className={cn(
-                        'w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors',
-                        selectedImage === idx ? 'border-primary' : 'border-transparent'
+                        "w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors",
+                        selectedImage === idx
+                          ? "border-primary"
+                          : "border-transparent",
                       )}
                     >
-                      <img src={img} alt="" className="w-full h-full object-cover" />
+                      <img
+                        src={img}
+                        alt=""
+                        className="w-full h-full object-cover"
+                      />
                     </button>
                   ))}
                 </div>
-              )}
+              )} */}
             </motion.div>
 
             {/* Details */}
@@ -154,7 +199,9 @@ const ProductDetails = () => {
                 {product.onSale && (
                   <span className="badge-sale">-{discountPercentage}% OFF</span>
                 )}
-                {product.isNew && <span className="badge-new">{t('product.new')}</span>}
+                {product.isNew && (
+                  <span className="badge-new">{t("product.new")}</span>
+                )}
               </div>
 
               {/* Category */}
@@ -162,7 +209,7 @@ const ProductDetails = () => {
                 to={`/category/${product.category.slug}`}
                 className="text-sm text-muted-foreground uppercase tracking-wider hover:text-primary"
               >
-                {product.category.name}
+                {product.category?.title}
               </Link>
 
               {/* Title */}
@@ -177,10 +224,10 @@ const ProductDetails = () => {
                     <Star
                       key={i}
                       className={cn(
-                        'h-5 w-5',
+                        "h-5 w-5",
                         i < Math.floor(product.rating)
-                          ? 'fill-gold text-gold'
-                          : 'text-muted'
+                          ? "fill-gold text-gold"
+                          : "text-muted",
                       )}
                     />
                   ))}
@@ -201,16 +248,22 @@ const ProductDetails = () => {
               </div>
 
               {/* Stock */}
-              <p className={cn(
-                'text-sm font-medium',
-                product.stock > 0 ? 'text-success' : 'text-destructive'
-              )}>
-                {product.stock > 0 ? `${t('product.in_stock')} (${product.stock})` : t('product.out_of_stock')}
-              </p>
+              {/* <p
+                className={cn(
+                  "text-sm font-medium",
+                  product.stock > 0 ? "text-success" : "text-destructive",
+                )}
+              >
+                {product.stock > 0
+                  ? `${t("product.in_stock")} (${product.stock})`
+                  : t("product.out_of_stock")}
+              </p> */}
 
               {/* Quantity */}
               <div className="flex items-center gap-4">
-                <span className="text-sm font-medium">{t('product.quantity')}:</span>
+                <span className="text-sm font-medium">
+                  {t("product.quantity")}:
+                </span>
                 <div className="flex items-center border border-border rounded-lg">
                   <Button
                     variant="ghost"
@@ -220,11 +273,16 @@ const ProductDetails = () => {
                   >
                     <Minus className="h-4 w-4" />
                   </Button>
-                  <span className="w-12 text-center font-medium">{quantity}</span>
+                  <span className="w-12 text-center font-medium">
+                    {quantity}
+                  </span>
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                    onClick={() =>
+                      // setQuantity(Math.min(product.stock, quantity + 1))
+                      setQuantity(Math.min(quantity + 1))
+                    }
                     disabled={quantity >= product.stock}
                   >
                     <Plus className="h-4 w-4" />
@@ -241,15 +299,19 @@ const ProductDetails = () => {
                   disabled={product.stock === 0}
                 >
                   <ShoppingCart className="h-5 w-5 mr-2" />
-                  {t('product.add_to_cart')}
+                  {t("product.add_to_cart")}
                 </Button>
                 <Button
                   size="lg"
                   variant="outline"
                   onClick={handleToggleWishlist}
-                  className={cn(isInWishlist && 'bg-sale/10 border-sale text-sale')}
+                  className={cn(
+                    isInWishlist && "bg-sale/10 border-sale text-sale",
+                  )}
                 >
-                  <Heart className={cn('h-5 w-5', isInWishlist && 'fill-current')} />
+                  <Heart
+                    className={cn("h-5 w-5", isInWishlist && "fill-current")}
+                  />
                 </Button>
               </div>
 
@@ -257,10 +319,10 @@ const ProductDetails = () => {
               <Tabs defaultValue="description" className="mt-8">
                 <TabsList className="w-full">
                   <TabsTrigger value="description" className="flex-1">
-                    {t('product.description')}
+                    {t("product.description")}
                   </TabsTrigger>
                   <TabsTrigger value="reviews" className="flex-1">
-                    {t('product.reviews')} ({productReviews.length})
+                    {t("product.reviews")} ({productReviews.length})
                   </TabsTrigger>
                 </TabsList>
                 <TabsContent value="description" className="mt-4">
@@ -272,28 +334,41 @@ const ProductDetails = () => {
                   {productReviews.length > 0 ? (
                     <div className="space-y-4">
                       {productReviews.map((review) => (
-                        <div key={review._id} className="bg-muted/30 rounded-lg p-4">
+                        <div
+                          key={review._id}
+                          className="bg-muted/30 rounded-lg p-4"
+                        >
                           <div className="flex items-center justify-between mb-2">
-                            <span className="font-medium">{review.userName}</span>
+                            <span className="font-medium">
+                              {review.userName}
+                            </span>
                             <div className="flex">
                               {[...Array(5)].map((_, i) => (
                                 <Star
                                   key={i}
                                   className={cn(
-                                    'h-4 w-4',
-                                    i < review.rating ? 'fill-gold text-gold' : 'text-muted'
+                                    "h-4 w-4",
+                                    i < review.rating
+                                      ? "fill-gold text-gold"
+                                      : "text-muted",
                                   )}
                                 />
                               ))}
                             </div>
                           </div>
-                          <p className="text-muted-foreground text-sm">{review.comment}</p>
-                          <p className="text-xs text-muted-foreground mt-2">{review.date}</p>
+                          <p className="text-muted-foreground text-sm">
+                            {review.comment}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-2">
+                            {review.date}
+                          </p>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-muted-foreground">{t('product.no_reviews')}</p>
+                    <p className="text-muted-foreground">
+                      {t("product.no_reviews")}
+                    </p>
                   )}
                 </TabsContent>
               </Tabs>
@@ -304,7 +379,7 @@ const ProductDetails = () => {
           {relatedProducts.length > 0 && (
             <section className="mt-16">
               <h2 className="font-display text-2xl font-bold mb-8">
-                {t('product.related_products')}
+                {t("product.related_products")}
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {relatedProducts.map((p, idx) => (

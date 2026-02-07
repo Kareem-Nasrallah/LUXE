@@ -1,13 +1,19 @@
-import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
-import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
-import { removeFromCart, updateQuantity, selectCartItems, selectCartTotal } from '@/store/slices/cartSlice';
-import { toast } from '@/hooks/use-toast';
+import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
+import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
+import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppDispatch";
+import {
+  removeFromCart,
+  updateQuantity,
+  selectCartItems,
+  selectCartTotal,
+} from "@/store/slices/cartSlice";
+import { toast } from "@/hooks/use-toast";
+import { urlFor } from "@/lib/image";
 
 const Cart = () => {
   const { t } = useTranslation();
@@ -18,8 +24,9 @@ const Cart = () => {
   const handleRemove = (productId: string, productName: string) => {
     dispatch(removeFromCart(productId));
     toast({
-      title: t('cart.remove'),
-      description: `${productName} removed from cart`,
+      title: t("cart.remove"),
+      description: t("tost.cart.product_removed", { product: productName }),
+      variant: "warning",
     });
   };
 
@@ -35,7 +42,7 @@ const Cart = () => {
     return (
       <>
         <Helmet>
-          <title>{t('cart.title')} - LUXE</title>
+          <title>{t("cart.title")} - LUXE</title>
         </Helmet>
         <div className="min-h-[60vh] flex flex-col items-center justify-center px-4">
           <motion.div
@@ -44,14 +51,16 @@ const Cart = () => {
             className="text-center"
           >
             <ShoppingBag className="h-24 w-24 text-muted-foreground/30 mx-auto mb-6" />
-            <h1 className="font-display text-3xl font-bold mb-4">{t('cart.empty')}</h1>
+            <h1 className="font-display text-3xl font-bold mb-4">
+              {t("cart.empty")}
+            </h1>
             <p className="text-muted-foreground mb-8">
-              Looks like you haven't added anything to your cart yet.
+              {t("cart.empty_description")}
             </p>
             <Button asChild size="lg">
               <Link to="/shop">
-                {t('cart.continue_shopping')}
-                <ArrowRight className="ml-2 h-4 w-4" />
+                {t("cart.continue_shopping")}
+                <ArrowRight className="ms-2 h-4 w-4" />
               </Link>
             </Button>
           </motion.div>
@@ -63,7 +72,7 @@ const Cart = () => {
   return (
     <>
       <Helmet>
-        <title>{t('cart.title')} - LUXE</title>
+        <title>{t("cart.title")} - LUXE</title>
       </Helmet>
 
       <div className="min-h-screen bg-background">
@@ -73,7 +82,7 @@ const Cart = () => {
             animate={{ opacity: 1, y: 0 }}
             className="font-display text-3xl md:text-4xl font-bold mb-8"
           >
-            {t('cart.title')}
+            {t("cart.title")}
           </motion.h1>
 
           <div className="grid lg:grid-cols-3 gap-8">
@@ -90,12 +99,19 @@ const Cart = () => {
                   <div className="flex gap-4 md:gap-6">
                     {/* Image */}
                     <Link
-                      to={`/product/${item.product.slug}`}
+                      to={`/product/${item.product.slug.current}`}
                       className="shrink-0"
                     >
                       <div className="w-24 h-24 md:w-32 md:h-32 rounded-lg overflow-hidden bg-muted">
                         <img
-                          src={item.product.images[0]}
+                          src={
+                            item?.product?.image
+                              ? urlFor(item.product.image)
+                                  .width(440)
+                                  .height(330)
+                                  .url()
+                              : ""
+                          }
                           alt={item.product.title}
                           className="w-full h-full object-cover"
                         />
@@ -104,13 +120,13 @@ const Cart = () => {
 
                     {/* Details */}
                     <div className="flex-1 min-w-0">
-                      <Link to={`/product/${item.product.slug}`}>
+                      <Link to={`/product/${item.product.slug.current}}`}>
                         <h3 className="font-medium hover:text-primary transition-colors line-clamp-2">
                           {item.product.title}
                         </h3>
                       </Link>
                       <p className="text-sm text-muted-foreground mt-1">
-                        {item.product.category.name}
+                        {item.product.category?.title}
                       </p>
                       <div className="flex items-center gap-2 mt-2">
                         <span className="font-bold">${item.product.price}</span>
@@ -128,17 +144,29 @@ const Cart = () => {
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8"
-                            onClick={() => handleUpdateQuantity(item.product._id, item.quantity - 1)}
+                            onClick={() =>
+                              handleUpdateQuantity(
+                                item.product._id,
+                                item.quantity - 1,
+                              )
+                            }
                             disabled={item.quantity <= 1}
                           >
                             <Minus className="h-3 w-3" />
                           </Button>
-                          <span className="w-8 text-center text-sm">{item.quantity}</span>
+                          <span className="w-8 text-center text-sm">
+                            {item.quantity}
+                          </span>
                           <Button
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8"
-                            onClick={() => handleUpdateQuantity(item.product._id, item.quantity + 1)}
+                            onClick={() =>
+                              handleUpdateQuantity(
+                                item.product._id,
+                                item.quantity + 1,
+                              )
+                            }
                           >
                             <Plus className="h-3 w-3" />
                           </Button>
@@ -147,7 +175,9 @@ const Cart = () => {
                           variant="ghost"
                           size="icon"
                           className="text-destructive hover:text-destructive"
-                          onClick={() => handleRemove(item.product._id, item.product.title)}
+                          onClick={() =>
+                            handleRemove(item.product._id, item.product.title)
+                          }
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -160,16 +190,28 @@ const Cart = () => {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => handleUpdateQuantity(item.product._id, item.quantity - 1)}
+                          onClick={() =>
+                            handleUpdateQuantity(
+                              item.product._id,
+                              item.quantity - 1,
+                            )
+                          }
                           disabled={item.quantity <= 1}
                         >
                           <Minus className="h-4 w-4" />
                         </Button>
-                        <span className="w-12 text-center">{item.quantity}</span>
+                        <span className="w-12 text-center">
+                          {item.quantity}
+                        </span>
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => handleUpdateQuantity(item.product._id, item.quantity + 1)}
+                          onClick={() =>
+                            handleUpdateQuantity(
+                              item.product._id,
+                              item.quantity + 1,
+                            )
+                          }
                         >
                           <Plus className="h-4 w-4" />
                         </Button>
@@ -183,7 +225,9 @@ const Cart = () => {
                         variant="ghost"
                         size="icon"
                         className="text-destructive hover:text-destructive"
-                        onClick={() => handleRemove(item.product._id, item.product.title)}
+                        onClick={() =>
+                          handleRemove(item.product._id, item.product.title)
+                        }
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -201,46 +245,54 @@ const Cart = () => {
             >
               <div className="bg-card rounded-xl border border-border p-6 sticky top-24">
                 <h2 className="font-display text-xl font-semibold mb-6">
-                  Order Summary
+                  {t("checkout.order_summary")}
                 </h2>
 
                 <div className="space-y-4">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">{t('cart.subtotal')}</span>
+                    <span className="text-muted-foreground">
+                      {t("cart.subtotal")}
+                    </span>
                     <span className="font-medium">${cartTotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">{t('cart.shipping')}</span>
+                    <span className="text-muted-foreground">
+                      {t("cart.shipping")}
+                    </span>
                     <span className="font-medium">
-                      {shipping === 0 ? t('cart.free_shipping') : `$${shipping.toFixed(2)}`}
+                      {shipping === 0
+                        ? t("cart.free_shipping")
+                        : `$${shipping.toFixed(2)}`}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">{t('cart.tax')}</span>
+                    <span className="text-muted-foreground">
+                      {t("cart.tax")}
+                    </span>
                     <span className="font-medium">${tax.toFixed(2)}</span>
                   </div>
                   <Separator />
                   <div className="flex justify-between text-lg">
-                    <span className="font-semibold">{t('cart.total')}</span>
+                    <span className="font-semibold">{t("cart.total")}</span>
                     <span className="font-bold">${total.toFixed(2)}</span>
                   </div>
                 </div>
 
                 {cartTotal < 100 && (
                   <p className="text-sm text-muted-foreground mt-4 p-3 bg-muted rounded-lg">
-                    Add ${(100 - cartTotal).toFixed(2)} more for free shipping!
+                    {t("cart.for_free_shipping", { remaining: (100 - cartTotal).toFixed(2) })}
                   </p>
                 )}
 
                 <Button asChild className="w-full mt-6" size="lg">
                   <Link to="/checkout">
-                    {t('cart.checkout')}
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                    {t("cart.checkout")}
+                    <ArrowRight className="ms-2 h-4 w-4" />
                   </Link>
                 </Button>
 
                 <Button asChild variant="outline" className="w-full mt-3">
-                  <Link to="/shop">{t('cart.continue_shopping')}</Link>
+                  <Link to="/shop">{t("cart.continue_shopping")}</Link>
                 </Button>
               </div>
             </motion.div>
