@@ -12,7 +12,7 @@ import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { login, logout } from "@/store/slices/authSlice";
 import { toast } from "@/hooks/use-toast";
 import { loginUser } from "@/services/authService";
-import { client } from "@/../client";
+import { client } from "../../../client";
 import { loadWishlist } from "@/store/slices/wishlistSlice";
 import { loadCart } from "@/store/slices/cartSlice";
 import { loginSchema } from "@/validation/auth/login.schema";
@@ -33,7 +33,7 @@ const AdminLogin = () => {
         { uid: res.user.uid },
       );
 
-      if (sanityUser?.role === "user") {
+      if (sanityUser == null || sanityUser?.role === "user") {
         dispatch(logout());
 
         return toast({
@@ -183,7 +183,7 @@ const AdminLogin = () => {
               <p className="font-medium mb-2">{t("auth.demo_credentials")}:</p>
               <p className="text-muted-foreground">
                 {t("auth.email")}:{" "}
-                <span className="font-mono">admin@luxe.com</span>
+                <span className="font-mono">admin1@luxe.com</span>
               </p>
               <p className="text-muted-foreground">
                 {t("auth.password")}: 123456

@@ -5,7 +5,6 @@ import { RootState } from "@/store";
 const AdminProtectedRoute = () => {
   const location = useLocation();
 
-  // عدل ده حسب شكل الauth عندك
   const { user } = useSelector((state: RootState) => state.auth);
 
   const isAuthenticated = user && user.role === "admin";
