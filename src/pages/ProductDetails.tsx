@@ -319,7 +319,7 @@ const ProductDetails = () => {
               <Tabs defaultValue="description" className="mt-8">
                 <TabsList className="w-full">
                   <TabsTrigger value="description" className="flex-1">
-                    {t("product.description")}
+                    {t("common.description")}
                   </TabsTrigger>
                   <TabsTrigger value="reviews" className="flex-1">
                     {t("product.reviews")} ({productReviews.length})

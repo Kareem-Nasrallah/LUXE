@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { Product } from "@/types";
 import { client } from "../../../client";
+import { sanityWriteClient } from "@/../sanityWriteClient";
 
 interface ProductsState {
   items: Product[];
@@ -56,12 +57,70 @@ export const fetchProductBySlug = createAsyncThunk(
   },
 );
 
+const buildProductData = (data: Product, isUpdate = false) => {
+  return {
+    title: data.title,
+
+    slug: {
+      _type: "slug",
+      current: isUpdate
+        ? `${data.title.toLowerCase().replace(/\s+/g, "-")}-${Date.now()}`
+        : data.title.toLowerCase().replace(/\s+/g, "-"),
+    },
+
+    description: data.description,
+    price: Number(data.price),
+    oldPrice: data.oldPrice ? Number(data.oldPrice) : undefined,
+    stock: Number(data.stock) || 1,
+    onSale: Boolean(data.onSale),
+
+    image: {
+      _type: "image",
+      asset: {
+        _type: "reference",
+        _ref: data.image,
+      },
+    },
+  };
+};
+
+export const createNewProduct = async (data: any) => {
+  try {
+    const newProduct = buildProductData(data);
+
+    await sanityWriteClient.create({
+      _type: "product",
+      ...newProduct,
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const updateSanityProduct = async (productId: string, data: Product) => {
+  try {
+    const updatedProduct = buildProductData(data, true);
+
+    await sanityWriteClient.patch(productId).set(updatedProduct).commit();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const deleteSanityProduct = async (productId: string) => {
+  try {
+    await sanityWriteClient.delete(productId);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 const applyFilters = (state: ProductsState) => {
   let filtered = [...state.items];
 
   if (state.filters.category) {
     filtered = filtered.filter(
-      (p) => p.category.slug.current === state.filters.category,
+      (p) => p.category?.slug?.current === state.filters.category,
     );
   }
 
@@ -83,7 +142,7 @@ const applyFilters = (state: ProductsState) => {
       filtered.sort((a, b) => b.price - a.price);
       break;
     case "popular":
-      filtered.sort((a, b) => b.rating - a.rating);
+      filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
       break;
     default:
       break;
@@ -116,7 +175,7 @@ const productsSlice = createSlice({
       applyFilters(state);
     },
     clearFilters: (state) => {
-      state.filters = initialState.filters;
+      state.filters = { ...initialState.filters };
       applyFilters(state);
     },
     addProduct: (state, action: PayloadAction<Product>) => {

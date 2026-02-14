@@ -31,7 +31,6 @@ import { selectWishlistItems } from "@/store/slices/wishlistSlice";
 import {
   selectIsAuthenticated,
   selectUser,
-  selectIsAdmin,
   logout,
 } from "@/store/slices/authSlice";
 import {
@@ -53,12 +52,11 @@ const Header = () => {
   const cartCount = useAppSelector(selectCartCount);
   const wishlistItems = useAppSelector(selectWishlistItems);
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
-  const isAdmin = useAppSelector(selectIsAdmin);
   const user = useAppSelector(selectUser);
   const darkMode = useAppSelector(selectDarkMode);
   const language = useAppSelector(selectLanguage);
 
-  const handleLanguageChange = (lang: "en" | "ar") => {
+  const handleLanguageChange = (lang: "en" | "ar" | "fr") => {
     dispatch(setLanguage(lang));
     i18n.changeLanguage(lang);
   };
@@ -66,7 +64,6 @@ const Header = () => {
   const handleLogout = async () => {
     try {
       const resp = await logoutUser();
-      console.log(resp);
       dispatch(logout());
       navigate("/login");
       dispatch(loadCart());
@@ -128,8 +125,14 @@ const Header = () => {
                 <DropdownMenuItem onClick={() => handleLanguageChange("en")}>
                   English {language === "en" && "✓"}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleLanguageChange("ar")}>
-                  العربية {language === "ar" && "✓"}
+                <DropdownMenuItem onClick={() => handleLanguageChange("fr")}>
+                  Français {language === "fr" && "✓"}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                className=" flex-row-reverse"
+                  onClick={() => handleLanguageChange("ar")}
+                >
+                  {language === "ar" && "✓"} العربية
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -191,7 +194,7 @@ const Header = () => {
                     <User className="h-4 w-4 mr-2" />
                     {t("nav.profile")}
                   </DropdownMenuItem>
-                  {isAdmin && (
+                  {user.role === "admin" && (
                     <DropdownMenuItem onClick={() => navigate("/admin")}>
                       <Settings className="h-4 w-4 mr-2" />
                       {t("nav.admin")}

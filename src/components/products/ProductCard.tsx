@@ -130,7 +130,7 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
           <CardContent className="p-4">
             <div className="space-y-2">
               <p className="text-xs text-muted-foreground uppercase tracking-wider">
-                {product.category.title}
+                {product.category?.title}
               </p>
               <h3 className="font-medium text-foreground line-clamp-1 group-hover:text-primary transition-colors">
                 {product.title}

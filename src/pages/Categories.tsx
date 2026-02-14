@@ -86,10 +86,12 @@ const Categories = () => {
                       </h2>
                       <div className="flex items-center justify-between">
                         <p className="text-background/80">
-                          {category.productCount} products
+                          {t("common.product", {
+                            count: category.productCount,
+                          })}
                         </p>
-                        <span className="inline-flex items-center gap-2 text-background font-medium group-hover:gap-3 transition-all">
-                          Shop Now
+                        <span className="inline-flex rtl:flex-row-reverse items-center gap-2 text-background font-medium group-hover:gap-3 transition-all">
+                          {t("common.shop_now")}
                           <ArrowRight className="h-4 w-4" />
                         </span>
                       </div>

@@ -1,13 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-export interface Offer {
-  id: string;
-  productIds: string[];
-  discountPercent: number;
-  expiresAt: string;
-  createdAt: string;
-  isActive: boolean;
-}
+import { Offer } from "@/types";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface OffersState {
   items: Offer[];
@@ -15,7 +7,7 @@ interface OffersState {
 
 const loadOffersFromStorage = (): Offer[] => {
   try {
-    const saved = localStorage.getItem('offers');
+    const saved = localStorage.getItem("offers");
     return saved ? JSON.parse(saved) : [];
   } catch {
     return [];
@@ -23,7 +15,7 @@ const loadOffersFromStorage = (): Offer[] => {
 };
 
 const saveOffersToStorage = (items: Offer[]) => {
-  localStorage.setItem('offers', JSON.stringify(items));
+  localStorage.setItem("offers", JSON.stringify(items));
 };
 
 const initialState: OffersState = {
@@ -31,7 +23,7 @@ const initialState: OffersState = {
 };
 
 const offersSlice = createSlice({
-  name: 'offers',
+  name: "offers",
   initialState,
   reducers: {
     addOffer: (state, action: PayloadAction<Offer>) => {
@@ -53,5 +45,6 @@ const offersSlice = createSlice({
 });
 
 export const { addOffer, updateOffer, deleteOffer } = offersSlice.actions;
-export const selectOffers = (state: { offers: OffersState }) => state.offers.items;
+export const selectOffers = (state: { offers: OffersState }) =>
+  state.offers.items;
 export default offersSlice.reducer;

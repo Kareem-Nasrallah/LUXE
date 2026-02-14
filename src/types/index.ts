@@ -5,7 +5,11 @@ export interface Product {
     current: string;
   };
   description: string;
-  image: string;
+  image: {
+    asset: {
+      _ref: string;
+    };
+  };
   price: number;
   oldPrice?: number;
   onSale: boolean;
@@ -18,10 +22,15 @@ export interface Product {
 export interface Category {
   _id: string;
   title: string;
+  description: string;
   slug: {
     current: string;
   };
-  image: string;
+  image: {
+    asset: {
+      _ref: string;
+    };
+  };
   productCount?: number;
 }
 
@@ -43,16 +52,20 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  isAdmin?: boolean;
+  role: "user" | "admin";
 }
 
 export interface Order {
-  id: string;
-  userId: string;
+  orderNumber: string;
+  user: User;
   items: CartItem[];
   total: number;
-  status: "pending" | "processing" | "shipped" | "delivered";
+  state: "pending" | "processing" | "shipped" | "delivered";
   shippingInfo: ShippingInfo;
+  userSnapshot: {
+    name: string;
+    email: string;
+  };
   createdAt: string;
 }
 
@@ -62,4 +75,13 @@ export interface ShippingInfo {
   address: string;
   city: string;
   phone: string;
+}
+
+export interface Offer {
+  id: string;
+  productIds: string[];
+  discountPercent: number;
+  expiresAt: string;
+  createdAt: string;
+  isActive: boolean;
 }

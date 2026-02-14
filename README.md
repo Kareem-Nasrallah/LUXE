@@ -1,56 +1,79 @@
 # 🛒 E-Commerce Website
 
-A modern e-commerce web application built with **React** and **TypeScript**, focusing on performance, clean UI, and real-world shopping experience. The project is fully functional for end users and designed to be scalable for future admin and analytics features.
+A modern full-featured **E-Commerce Web Application** built with **React** and **TypeScript**, designed with scalability, performance, and real-world commerce architecture in mind.
+
+The project includes a fully functional **Admin Panel** and supports **three languages**.
 
 ---
 
-## 🚀 Live Features (Implemented)
+## 🌍 Live Demo Features
+
+---
+
+## 🛍️ Customer-Facing Features
 
 ### 🏠 Home Page
 
 - Featured products
 - Highlighted categories
 - Active offers
-- Add products to **Cart** or **Wishlist** directly
+- Quick add to Cart or Wishlist
 
-### 🛍️ Shop Page
+---
 
-- Full product listing
-- Advanced filtering:
-  - By category
-  - By price range
-  - Products with offers
-  - Combine or reset filters
+### 🛒 Shop Page
 
-- Sorting options:
-  - Price (low → high / high → low)
-  - Newest products
-  - Most popular
+- Complete product listing
 
-### 📦 Product Details Page
+#### Advanced Filtering
 
-- Detailed product information
-- Add any quantity to the cart
-- Cart access available anywhere products appear
+- By category
+- By price range
+- On-sale products
+- Combine & reset filters
+
+#### Sorting Options
+
+- Price (Low → High / High → Low)
+- Newest products
+- Most popular
+
+---
+
+### 📦 Product Details
+
+- Full product information
+- Quantity selection
+- Add to cart from anywhere
+
+---
 
 ### 🗂️ Categories
 
-- Categories overview page:
-  - Category image
-  - Name
-  - Product count per category
+#### Categories Overview
 
-- Individual category pages with all related products
+- Category image
+- Category name
+- Dynamic product count
+- Dedicated page per category
+
+---
 
 ### 🛒 Cart
 
-- Cart items management
-- Quantity updates
-- Order summary
+- Add / remove items
+- Quantity management
+- Order summary calculation
+- Persistent per user
+
+---
 
 ### 💳 Checkout
 
-- Checkout flow with order summary
+- Order summary
+- Checkout flow
+
+---
 
 ### 👤 User Profile
 
@@ -58,101 +81,149 @@ A modern e-commerce web application built with **React** and **TypeScript**, foc
 - Orders tracking
 - Wishlist management
 
+---
+
 ### ❤️ Wishlist
 
 - Add / remove products
-- Persistent across sessions
+- Persisted across sessions
+
+---
 
 ### 🔐 Authentication
 
-- Login page
-- Register page
-- Firebase authentication (Email/Password)
+- Register / Login
+- Firebase Email & Password Authentication
 
 ---
 
-## ✨ Extra Features
+## 🛠️ Admin Panel
 
-- 🌙 Dark / Light Mode
-- 🌍 Multi-language support (Arabic / English)
-- 💾 Persistent cart per user
+A fully integrated admin dashboard for managing store data.
+
+### 📊 Dashboard
+
+- Total Products
+- Total Categories
+- Total Orders
+- Total Revenue
+
+---
+
+### 📦 Products Management
+
+- View all products
+- Search products instantly
+- Create new product
+- Edit existing product
+- Delete products
+
+---
+
+### 🗂️ Categories Management
+
+- View all categories
+- Create new category
+- Edit category
+- Delete category
+
+---
+
+### 🏷️ Offers Management
+
+- View all discounted products
+- Manage active offers
+
+---
+
+## 🌍 Multi-Language Support
+
+Supported Languages:
+
+- 🇺🇸 English
+- 🇸🇦 Arabic (RTL fully supported)
+- 🇫🇷 French
+
+Features:
+
+- Dynamic language switching
+- Automatic plural handling (including Arabic complex plural rules)
+- Direction switching (LTR / RTL)
+
+---
+
+## ✨ Additional Features
+
+- 🌙 Dark / Light mode
 - 🔔 Toast notifications
-- 📱 Responsive design
-
----
-
-## 🧩 Planned Features (Upcoming)
-
-These features are intentionally planned for future development:
-
-### 🛠️ Admin Panel
-
-- Admin authentication & roles
-- Create / edit / delete:
-  - Categories
-  - Products
-  - Offers
-
-### 📊 Dashboard & Analytics
-
-- Sales analysis
-- Orders overview
-- Revenue statistics
-
-### ⭐ Product Reviews
-
-- User ratings
-- Product comments
+- 📱 Fully responsive design
+- ⚡ Optimized performance
+- 🧠 Clean state management architecture
 
 ---
 
 ## 🗄️ Backend & Services
 
-- **Sanity CMS** → Products, categories, offers data
-- **Firebase Authentication** → User login & registration
+- Sanity CMS → Products, categories, offers, and orders
+- Firebase Authentication → User authentication
+- Structured GROQ queries
+- Optimized CDN usage strategy
 
 ---
 
 ## 🧪 Tech Stack
 
-- **React**
-- **TypeScript**
-- **Vite**
-- **React Router DOM**
-- **Redux Toolkit**
-- **Tailwind CSS**
-- **shadcn/ui**
-- **next-themes**
-- **Formik**
-- **Yup**
-- **i18next**
-- **Lucide React**
+- React
+- TypeScript
+- Vite
+- React Router DOM
+- Redux Toolkit
+- Tailwind CSS
+- shadcn/ui
+- Formik
+- Yup
+- i18next
+- Firebase
+- Sanity CMS
+- Lucide React
 
 ---
 
-## 📁 Project Status
+## 🏗️ Architecture Highlights
 
-- ✅ Core e-commerce features completed
-- 🚧 Admin & analytics features planned
-- 🔄 Continuous improvements & refactoring
+- Modular folder structure
+- Reusable UI components
+- Optimistic UI updates (Admin side)
+- Separated read/write Sanity clients
+- Scalable pluralization system
+- Clean CRUD abstraction for admin operations
 
 ---
 
-## 📝 Notes
+## 📈 Project Status
 
-This project was developed with a strong focus on:
+- ✅ Full customer e-commerce flow completed
+- ✅ Fully functional Admin Panel
+- ✅ Multi-language system (EN / AR / FR)
+- 🔄 Continuous performance and UX improvements
 
-- Clean architecture
-- Reusable components
+---
+
+## 📝 Development Philosophy
+
+This project was built with a strong focus on:
+
 - Real-world e-commerce logic
-- Scalability for future features
+- Clean architecture principles
+- Scalable CMS integration
+- Production-level state management
+- Internationalization best practices
 
 ---
 
 ## 👨‍💻 Author
 
-**Kareem Nasrallah**
-
+**Kareem Nasrallah**  
 Frontend Developer
 
 ---

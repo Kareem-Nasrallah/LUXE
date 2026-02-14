@@ -9,6 +9,9 @@ export const checkoutSchema = (t: (key: string) => string) => {
     email: Yup.string().email(v("invalid_email")).required(v("required_email")),
     address: Yup.string().required(v("required")),
     city: Yup.string().required(v("required")),
-    phone: Yup.string().required(v("required")),
+    phone: Yup.string()
+      .required(v("required"))
+      .matches(/^[0-9]+$/, v("numbers_only"))
+      .length(11, v("11_digits")),
   });
 };

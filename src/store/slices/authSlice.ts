@@ -4,7 +4,6 @@ import { User } from "@/types";
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
-  isAdmin: boolean;
 }
 
 const loadUserFromStorage = (): User | null => {
@@ -21,7 +20,6 @@ const savedUser = loadUserFromStorage();
 const initialState: AuthState = {
   user: savedUser,
   isAuthenticated: !!savedUser,
-  isAdmin: savedUser?.isAdmin || false,
 };
 
 const authSlice = createSlice({
@@ -31,15 +29,12 @@ const authSlice = createSlice({
     login: (state, action: PayloadAction<User>) => {
       state.user = action.payload;
       state.isAuthenticated = true;
-      state.isAdmin = !!action.payload.isAdmin;
 
       localStorage.setItem("user", JSON.stringify(state.user));
     },
     logout: (state) => {
       state.user = null;
       state.isAuthenticated = false;
-      state.isAdmin = false;
-      console.log('first')
       localStorage.removeItem("user");
     },
     updateUser: (state, action: PayloadAction<Partial<User>>) => {
@@ -56,6 +51,5 @@ export const { login, logout, updateUser } = authSlice.actions;
 export const selectUser = (state: { auth: AuthState }) => state.auth.user;
 export const selectIsAuthenticated = (state: { auth: AuthState }) =>
   state.auth.isAuthenticated;
-export const selectIsAdmin = (state: { auth: AuthState }) => state.auth.isAdmin;
 
 export default authSlice.reducer;

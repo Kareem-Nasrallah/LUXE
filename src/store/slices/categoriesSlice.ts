@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { Category } from "@/types";
-import { mockCategories } from "@/data/mockData";
-import { client } from "../../../client";
+import { client } from "@/../client";
+import { sanityWriteClient } from "@/../sanityWriteClient";
 
 interface CategoriesState {
   items: Category[];
@@ -22,6 +22,7 @@ export const fetchCategories = createAsyncThunk(
       *[_type == "category"]{
         _id,
         title,
+        description,
         slug,
         image,
         "productCount": count(
@@ -32,6 +33,54 @@ export const fetchCategories = createAsyncThunk(
     return categories;
   },
 );
+
+const buildCategoryData = (data: Category, isUpdate = false) => {
+  return {
+    title: data.title,
+    description: data.description,
+
+    image: {
+      _type: "image",
+      asset: {
+        _type: "reference",
+        _ref: data.image,
+      },
+    },
+
+    slug: {
+      _type: "slug",
+      current: isUpdate
+        ? `${data.title.toLowerCase().replace(/\s+/g, "-")}-${Date.now()}`
+        : data.title.toLowerCase().replace(/\s+/g, "-"),
+    },
+  };
+};
+
+export const updateSanitycategory = async (categoryId: string, data: any) => {
+  const categoryData = buildCategoryData(data, true);
+  try {
+    await sanityWriteClient.patch(categoryId).set(categoryData).commit();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const createSanitycategory = async (data: any) => {
+  const categoryData = buildCategoryData(data);
+  try {
+    await sanityWriteClient.create({ _type: "category", ...categoryData });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const deleteSanityCategory = async (categoryId: string) => {
+  try {
+    await sanityWriteClient.delete(categoryId);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 const categoriesSlice = createSlice({
   name: "categories",

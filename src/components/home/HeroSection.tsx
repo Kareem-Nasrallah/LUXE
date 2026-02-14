@@ -71,7 +71,7 @@ const HeroSection = () => {
                 className="group flex flex-row rtl:flex-row-reverse"
               >
                 <Link to="/shop">
-                  {t("home.shop_now")}
+                  {t("common.shop_now")}
                   <ArrowRight className="ms-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>

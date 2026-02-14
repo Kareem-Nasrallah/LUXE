@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { Formik, Form, Field } from "formik";
-import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,6 +18,7 @@ import { selectUser } from "@/store/slices/authSlice";
 import { toast } from "@/hooks/use-toast";
 import { urlFor } from "@/lib/image";
 import { checkoutSchema } from "@/validation/checkout.schema";
+import { sanityWriteClient } from "@/../sanityWriteClient";
 
 interface CheckoutFormValues {
   name: string;
@@ -32,81 +32,68 @@ const Checkout = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const [orderPlaced, setOrderPlaced] = useState(false);
-  const [orderId, setOrderId] = useState("");
 
   const cartItems = useAppSelector(selectCartItems);
   const cartTotal = useAppSelector(selectCartTotal);
   const user = useAppSelector(selectUser);
 
+  useEffect(() => {
+    if (cartItems.length === 0) {
+      navigate("/cart");
+    }
+  }, []);
+
   const shipping = cartTotal >= 100 ? 0 : 10;
   const tax = cartTotal * 0.08;
   const total = cartTotal + shipping + tax;
 
-  const handleSubmit = (values: CheckoutFormValues) => {
-    const newOrderId = `ORD-${Date.now()}`;
-    const existingOrders = JSON.parse(localStorage.getItem("orders") || "[]");
-    const newOrder = {
-      id: newOrderId,
-      userId: user?.id || "guest",
-      items: cartItems,
+  const handleSubmit = async (values: CheckoutFormValues) => {
+    const newOrderNumber = `ORD-${Date.now()}`;
+
+    const orderData = {
+      _type: "order",
+
+      user: {
+        type: "reference",
+        ref: user?.id ?? "guest",
+      },
+
+      userSnapshot: {
+        name: user?.name ?? values.name,
+        email: user?.email ?? values.email,
+      },
+
+      items: cartItems.map((item) => ({
+        type: "object",
+        product: {
+          type: "reference",
+          ref: item.product._id,
+        },
+        title: item.product.title,
+        price: item.product.price,
+        quantity: item.quantity,
+      })),
+
       total,
       status: "pending",
-      shippingInfo: values,
       createdAt: new Date().toISOString(),
+      orderNumber: newOrderNumber,
+      shippingInfo: values,
     };
-    localStorage.setItem(
-      "orders",
-      JSON.stringify([...existingOrders, newOrder]),
-    );
-    dispatch(clearCart());
-    setOrderId(newOrderId);
-    setOrderPlaced(true);
-    toast({
-      title: t("checkout.success"),
-      description: t("toast.order_placed", { orderId: newOrderId }),
-      variant: "success",
-    });
+
+    try {
+      await sanityWriteClient.create(orderData);
+      toast({
+        title: t("checkout.success"),
+        description: t("toast.order_placed", { orderNumber: newOrderNumber }),
+        variant: "success",
+      });
+      dispatch(clearCart());
+      navigate(`/checkout/success/${newOrderNumber}`);
+    } catch (error) {
+      console.error(error);
+    }
   };
-
-  if (orderPlaced) {
-    return (
-      <>
-        <Helmet>
-          <title>Order Confirmed - LUXE</title>
-        </Helmet>
-        <div className="min-h-[60vh] flex items-center justify-center px-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-center max-w-md"
-          >
-            <div className="w-20 h-20 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle className="h-10 w-10 text-success" />
-            </div>
-            <h1 className="font-display text-3xl font-bold mb-4">
-              {t("checkout.success")}
-            </h1>
-            <p className="text-muted-foreground mb-2">
-              {t("checkout.order_done")}
-            </p>
-            <p className="text-sm text-muted-foreground mb-8">
-              {t("checkout.order_number")}:{" "}
-              <span className="font-mono font-medium">{orderId}</span>
-            </p>
-            <Button onClick={() => navigate("/shop")}>
-              {t("cart.continue_shopping")}
-            </Button>
-          </motion.div>
-        </div>
-      </>
-    );
-  }
-
-  if (cartItems.length === 0) {
-    navigate("/cart");
-    return null;
-  }
 
   return (
     <>
@@ -227,7 +214,7 @@ const Checkout = () => {
                           as={Input}
                           id="phone"
                           name="phone"
-                          placeholder="+1 (555) 123-4567"
+                          placeholder="01$23456789"
                           className={
                             errors.phone && touched.phone
                               ? "border-destructive"

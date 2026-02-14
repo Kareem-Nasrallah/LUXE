@@ -194,7 +194,7 @@ const Shop = () => {
               {/* Toolbar */}
               <div className="flex items-center justify-between mb-6">
                 <p className="text-muted-foreground">
-                  {products.length} {t("admin.products")}
+                  {t("common.product", { count: products.length })}
                 </p>
                 <div className="flex items-center gap-4">
                   {/* Mobile Filter */}

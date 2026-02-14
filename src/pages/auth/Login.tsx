@@ -42,8 +42,8 @@ const Login = () => {
       dispatch(loadWishlist());
 
       toast({
-        title: t("auth.login_success"),
-        description: t("auth.welcome_back", { name: sanityUser?.name }),
+        title: t("toast.auth.login_success"),
+        description: t("toast.auth.welcome_back", { name: sanityUser?.name }),
         variant: "success",
       });
       navigate("/");
@@ -52,8 +52,8 @@ const Login = () => {
       if (error.code === "auth/invalid-credential") {
         setInvalidAuth(true);
         toast({
-          title: t("auth.auth_error"),
-          description: t("auth.invalid_credential"),
+          title: t("toast.auth.auth_error"),
+          description: t("toast.auth.invalid_credential"),
           variant: "destructive",
         });
       }

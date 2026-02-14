@@ -62,7 +62,7 @@ const CategorySection = ({ categories }: CategorySectionProps) => {
                       {category?.title}
                     </h3>
                     <p className="text-sm text-background/80">
-                      {category.productCount} {t("admin.products")}
+                      {t("common.product", {count: category.productCount})}
                     </p>
                   </div>
                 </div>

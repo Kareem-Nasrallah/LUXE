@@ -3,81 +3,82 @@ import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
+import { Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "@/hooks/use-toast";
-import { sanityWriteClient } from "@/../sanityWriteClient";
-import { registerUser } from "@/services/authService";
-import { useState } from "react";
-import { registerSchema } from "@/validation/auth/register.schema";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { login } from "@/store/slices/authSlice";
-import { loadCart } from "@/store/slices/cartSlice";
+import { login, logout } from "@/store/slices/authSlice";
+import { toast } from "@/hooks/use-toast";
+import { loginUser } from "@/services/authService";
+import { client } from "@/../client";
 import { loadWishlist } from "@/store/slices/wishlistSlice";
+import { loadCart } from "@/store/slices/cartSlice";
+import { loginSchema } from "@/validation/auth/login.schema";
+import { useState } from "react";
 
-interface RegisterFormValues {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
-
-const Register = () => {
+const AdminLogin = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const [emailError, setEmailError] = useState<null | string>(null);
+  const [invalidAuth, setInvalidAuth] = useState(false);
 
-  const handleSubmit = async (values: RegisterFormValues) => {
+  const handleSubmit = async (values: { email: string; password: string }) => {
     try {
-      const res = await registerUser(values.email, values.password);
-      const token = await res.user.getIdToken();
+      const res = await loginUser(values.email, values.password);
 
-      await sanityWriteClient.create({
-        _type: "user",
-        id: res.user.uid,
-        email: res.user.email,
-        name: values.name,
-        role: "user",
-      });
+      const sanityUser = await client.fetch(
+        `*[_type == "user" && id == $uid][0]`,
+        { uid: res.user.uid },
+      );
+
+      if (sanityUser?.role === "user") {
+        dispatch(logout());
+
+        return toast({
+          title: "Access Denied",
+          description: "You do not have admin privileges.",
+          variant: "destructive",
+        });
+      }
 
       dispatch(
         login({
-          email: res.user.email,
-          name: values.name,
-          role: "user",
           id: res.user.uid,
+          email: res.user.email,
+          ...sanityUser,
         }),
       );
       dispatch(loadCart());
       dispatch(loadWishlist());
 
       toast({
-        title: t("toast.auth.register_success"),
-        description: t("toast.auth.welcome", { name: values.name }),
+        title: t("toast.auth.login_success_admin"),
+        description: t("toast.auth.welcome_back", { name: sanityUser?.name }),
         variant: "success",
       });
 
-      navigate("/");
+      navigate("/admin");
     } catch (error: any) {
       console.error(error);
-      if (error.code === "auth/email-already-in-use") {
-        setEmailError(t("auth.email_in_use"));
-
+      if (error.code === "auth/invalid-credential") {
+        setInvalidAuth(true);
         toast({
           title: t("toast.auth.auth_error"),
-          description: t("auth.email_in_use"),
+          description: t("toast.auth.invalid_credential"),
           variant: "destructive",
         });
       }
     }
   };
+
   return (
     <>
       <Helmet>
-        <title>{t("auth.register")} - LUXE</title>
+        <title>Admin Login - LUXE</title>
       </Helmet>
+
       <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4 py-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -86,47 +87,29 @@ const Register = () => {
         >
           <div className="bg-card rounded-2xl border border-border p-8 shadow-lg">
             <div className="text-center mb-8">
-              <Link to="/" className="inline-block mb-6">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Shield className="h-8 w-8 text-primary" />
+              </div>
+              <Link to="/" className="inline-block mb-4">
                 <span className="font-display text-3xl font-bold text-gradient">
                   LUXE
                 </span>
               </Link>
               <h1 className="font-display text-2xl font-bold mb-2">
-                {t("auth.register")}
+                {t("auth.admin_login")}
               </h1>
               <p className="text-muted-foreground">
-                {t("auth.description_register")}
+                {t("auth.access_dashboard")}
               </p>
             </div>
-            <Formik<RegisterFormValues>
-              initialValues={{
-                name: "",
-                email: "",
-                password: "",
-                confirmPassword: "",
-              }}
-              validationSchema={registerSchema(t)}
+
+            <Formik
+              initialValues={{ email: "", password: "" }}
+              validationSchema={loginSchema(t)}
               onSubmit={handleSubmit}
             >
               {({ errors, touched, isSubmitting }) => (
                 <Form className="space-y-4">
-                  <div>
-                    <Label htmlFor="name">{t("auth.name")}</Label>
-                    <Field
-                      as={Input}
-                      id="name"
-                      name="name"
-                      placeholder="John Doe"
-                      className={
-                        errors.name && touched.name ? "border-destructive" : ""
-                      }
-                    />
-                    {errors.name && touched.name && (
-                      <p className="text-sm text-destructive mt-1">
-                        {errors.name}
-                      </p>
-                    )}
-                  </div>
                   <div>
                     <Label htmlFor="email">{t("auth.email")}</Label>
                     <Field
@@ -134,7 +117,7 @@ const Register = () => {
                       id="email"
                       name="email"
                       type="email"
-                      placeholder="you@example.com"
+                      placeholder="admin@luxe.com"
                       className={
                         errors.email && touched.email
                           ? "border-destructive"
@@ -146,12 +129,8 @@ const Register = () => {
                         {errors.email}
                       </p>
                     )}
-                    {emailError && touched.email && (
-                      <p className="text-sm text-destructive mt-1">
-                        {emailError}
-                      </p>
-                    )}
                   </div>
+
                   <div>
                     <Label htmlFor="password">{t("auth.password")}</Label>
                     <Field
@@ -171,49 +150,45 @@ const Register = () => {
                         {errors.password}
                       </p>
                     )}
-                  </div>
-                  <div>
-                    <Label htmlFor="confirmPassword">
-                      {t("auth.confirm_password")}
-                    </Label>
-                    <Field
-                      as={Input}
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      type="password"
-                      placeholder="••••••••"
-                      className={
-                        errors.confirmPassword && touched.confirmPassword
-                          ? "border-destructive"
-                          : ""
-                      }
-                    />
-                    {errors.confirmPassword && touched.confirmPassword && (
-                      <p className="text-sm text-destructive mt-1">
-                        {errors.confirmPassword}
+                    {invalidAuth && (
+                      <p className="text-sm text-destructive w-fit mt-1 mx-auto">
+                        {t("auth.invalid_credential")}
                       </p>
                     )}
                   </div>
+
                   <Button
                     type="submit"
                     className="w-full"
                     size="lg"
                     disabled={isSubmitting}
                   >
-                    {t("auth.register")}
+                    {t("auth.access_dashboard_btn")}
                   </Button>
                 </Form>
               )}
             </Formik>
+
             <p className="text-center text-sm text-muted-foreground mt-6">
-              {t("auth.have_account")}{" "}
+              {t("auth.not_admin")}{" "}
               <Link
                 to="/login"
                 className="text-primary hover:underline font-medium"
               >
-                {t("auth.login")}
+                {t("auth.user_login")}
               </Link>
             </p>
+
+            <div className="mt-6 p-4 bg-muted rounded-lg text-sm">
+              <p className="font-medium mb-2">{t("auth.demo_credentials")}:</p>
+              <p className="text-muted-foreground">
+                {t("auth.email")}:{" "}
+                <span className="font-mono">admin@luxe.com</span>
+              </p>
+              <p className="text-muted-foreground">
+                {t("auth.password")}: 123456
+              </p>
+            </div>
           </div>
         </motion.div>
       </div>
@@ -221,4 +196,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default AdminLogin;
